@@ -133,3 +133,5 @@ dmypy.json
 
 # local
 last_seen_ids.json
+auth_assets.json
+
