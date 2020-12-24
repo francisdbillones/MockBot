@@ -28,7 +28,7 @@ def bot():
 	except:
 		raise Exception("The user does not exist, or the username is incorrect.")
 
-	userID = user.id
+	userID = user.id	
 
 	while True:
 		mock_reply(userID)
@@ -48,7 +48,7 @@ def mock_reply(userID):
 		logging.info("No new tweets yet")
 		return
 
-	mock_text = mock(latest_tweet.full_text)
+	mock_text = mock(latest_tweet.full_text, latest_tweet.in_reply_to_status_id != None)
 
 	logging.info("Mocking...")
 
@@ -81,16 +81,23 @@ def timer(s):
 	for i in range(s, 0, -1):
 		time.sleep(1)
 
-def getPureText(string):
+def getPureText(string, is_reply):
 	words = string.split()
 	result = ""
 	for i, word in enumerate(words):
-		if word[0] != '@' and word[0:4] != 'http':
-			result += word + " "
+		if word[0:4] == 'http':
+			continue
+		elif word[0] == '@':
+			if is_reply:
+				continue
+			else:
+				result += '@/' + word[1::] + ' '
+		else:
+			result += word + ' '
 	return result
 
-def mock(string):
-	words = getPureText(string).split()
+def mock(string, is_reply):
+	words = getPureText(string, is_reply).split()
 
 	result = ''
 	for i, word in enumerate(words):
